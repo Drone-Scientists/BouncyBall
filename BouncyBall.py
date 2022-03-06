@@ -11,6 +11,7 @@
 # Feature: Ball will be able to change colors to suit the mood of the user.
 
 from graphics import *
+from math import *
 
 # Maybe this problem can work in graphics. I'd have to figure out how to draw something and then re-draw it.
 # First, let's get our window open.
@@ -93,6 +94,51 @@ class wallObject:
 
     def getCoordinatesy(self):
         return self.coordinatesy
+
+
+# Defining velocity magnitude function
+
+def vMagnitude(initialV, acceleration):
+
+    # Velocity equals v0 plus acceleration
+    velocity = initialV + acceleration
+    return velocity
+
+
+def directorAlgorithmX(direction, velMag):
+
+    # The director algorithm X determines the X portion of the direction portion of the balls movement vector.
+    # Negative values for X determine that the ball is moving left, positive values for X determine that the ball
+    # is moving right.
+
+    if direction == "left":
+
+        xDirection = -velMag
+
+    if direction == "right":
+
+        xDirection = velMag
+
+    # The return of this function is used for the X position delta.
+
+    return xDirection
+
+
+def directorAlgorithmY(direction, velMag):
+
+    # The director algorithm Y determines the Y portion of the direction portion of the balls movment vector.
+    # Negative values for Y determine that the ball is moving down, positive values for Y determine that the ball
+    # is moving up.
+
+    if direction == "down":
+
+        yDirection = -velMag
+
+    if direction == "up":
+
+        yDirection = velMag
+
+    return yDirection
 
 
 def main():
