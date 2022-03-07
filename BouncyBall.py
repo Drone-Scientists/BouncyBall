@@ -96,61 +96,82 @@ class wallObject:
         return self.coordinatesy
 
 
-# Defining velocity magnitude function
+def directorAlgorithmX(angle, velMag):
 
-def vMagnitude(initialV, acceleration):
+    # The director algorithm X takes in an angle and a velocity to figure out the X vector component.
 
-    # Velocity equals v0 plus acceleration
-    velocity = initialV + acceleration
-    return velocity
+    xComponent = cos(angle) * velMag
 
-
-def directorAlgorithmX(direction, velMag):
-
-    # The director algorithm X determines the X portion of the direction portion of the balls movement vector.
-    # Negative values for X determine that the ball is moving left, positive values for X determine that the ball
-    # is moving right.
-
-    if direction == "left":
-
-        xDirection = -velMag
-
-    if direction == "right":
-
-        xDirection = velMag
-
-    # The return of this function is used for the X position delta.
-
-    return xDirection
+    return xComponent
 
 
-def directorAlgorithmY(direction, velMag):
+def directorAlgorithmY(angle, velMag):
 
-    # The director algorithm Y determines the Y portion of the direction portion of the balls movment vector.
-    # Negative values for Y determine that the ball is moving down, positive values for Y determine that the ball
-    # is moving up.
+    # The director algorithm Y takes in an angle and a velocity to figure out the Y vector component.
 
-    if direction == "down":
+    yComponent = sin(angle) * velMag
 
-        yDirection = -velMag
+    return yComponent
 
-    if direction == "up":
 
-        yDirection = velMag
+def directorAlgorithmV(xComponent, yComponent):
 
-    return yDirection
+    # This function takes the xComponent vector and the yComponent vector and returns a combined velocity!
+
+    newVector = sqrt((xComponent * xComponent) + (yComponent * yComponent))
+
+    return newVector
+
+# We need a function that provides an angle, otherwise the director algorithms do not work.
+
+
+def velocityDelta(initialV, initialAngle, acceleration):
+
+    # This function calculates a new velocity. The change in Y component is important here.
+
+    x = directorAlgorithmX(initialAngle, initialV)
+    newY = directorAlgorithmY(initialAngle, initialV) - acceleration
+
+    # With x and newY , we can create the new velocity magnitude
+
+    newV = directorAlgorithmV(x, newY)
+
+    return newV
 
 
 def main():
 
     ball = ballObject()
+    wall1 = wallObject()
+    wall2 = wallObject()
+    wall3 = wallObject()
+    wall4 = wallObject()
+
+    wall3.setLength(10)
+    wall3.setWidth(50)
+    wall4.setLength(10)
+    wall4.setWidth(50)
 
     # Ball color is a variable that will be changeable later
     ballColor = "red"
     win = GraphWin("BouncyBall.py", 500, 500)
+    wallA = Rectangle(Point(0, 0), Point(500, 10))
+    wallB = Rectangle(Point(0, 0), Point(10, 500))
+    wallC = Rectangle(Point(490, 0), Point(500, 500))
+    wallD = Rectangle(Point(0, 490), Point(500, 500))
     dot = Circle(Point(ball.coordinatesx, ball.coordinatesy), ball.radius)
+    wallA.setFill("blue")
+    wallB.setFill("blue")
+    wallC.setFill("blue")
+    wallD.setFill("blue")
     dot.setFill(ballColor)
+
     dot.draw(win)
+    wallA.draw(win)
+    wallB.draw(win)
+    wallC.draw(win)
+    wallD.draw(win)
+
     win.getKey()
 
 
