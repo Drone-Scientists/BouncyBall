@@ -12,9 +12,24 @@
 
 from graphics import *
 from math import *
+import unittest
+
 
 # Maybe this problem can work in graphics. I'd have to figure out how to draw something and then re-draw it.
 # First, let's get our window open.
+
+# This is the test class for the bouncyball simulation.
+
+class TestBB(unittest.TestCase):
+
+    def test_directorXFlatAngle(self):
+        result = cos(0) * 15
+        self.assertEqual(result, 15)
+
+    def test_directorXFortyFiveAngle(self):
+        result = cos(45) * 15
+        result = round(result)
+        self.assertEqual(result, 8)
 
 
 class ballObject:
@@ -101,6 +116,7 @@ def directorAlgorithmX(angle, velMag):
     # The director algorithm X takes in an angle and a velocity to figure out the X vector component.
 
     xComponent = cos(angle) * velMag
+    xComponent = round(xComponent)
 
     return xComponent
 
@@ -110,7 +126,7 @@ def directorAlgorithmY(angle, velMag):
     # The director algorithm Y takes in an angle and a velocity to figure out the Y vector component.
 
     yComponent = sin(angle) * velMag
-
+    yComponent = round(yComponent)
     return yComponent
 
 
