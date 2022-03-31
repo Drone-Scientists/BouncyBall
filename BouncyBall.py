@@ -13,12 +13,14 @@
 from graphics import *
 from math import *
 import unittest
-
+import turtle
+import time
 
 # Maybe this problem can work in graphics. I'd have to figure out how to draw something and then re-draw it.
 # First, let's get our window open.
 
 # This is the test class for the bouncyball simulation.
+
 
 class TestBB(unittest.TestCase):
 
@@ -38,8 +40,8 @@ class ballObject:
         self.radius = 10
         self.velocity = 0
         self.acceleration = 0
-        self.coordinatesx = 100
-        self.coordinatesy = 100
+        self.coordinatesx = 0
+        self.coordinatesy = 1000
 
     # These functions set different variables for the ball
 
@@ -111,6 +113,25 @@ class wallObject:
         return self.coordinatesy
 
 
+class ballAnimate(turtle.Turtle):
+
+    def __init__(self):
+
+        turtle.Turtle.__init__(self)
+
+        turtle.setworldcoordinates(0, 0, 5000, 5000)
+        self.hideturtle()
+        self.penup()
+        self.shape("circle")
+        self.color("red")
+        self.goto(2500, 4900)
+        self.showturtle()
+
+    def movement(self, newX, newY):
+
+        self.goto(newX, newY)
+
+
 def directorAlgorithmX(angle, velMag):
 
     # The director algorithm X takes in an angle and a velocity to figure out the X vector component.
@@ -155,40 +176,117 @@ def velocityDelta(initialV, initialAngle, acceleration):
     return newV
 
 
+# partway through coding movingBall, I realized that this algorithm will fit better in a "while" loop for the animation of the
+# physics sim. Regardless, I am keeping movingBall() as a reference point since it is my current best representation for what
+# The simulation will look like!
+
+def movingBall(initialA, initialV):
+
+    # Algorithm for moving ball
+
+    # SECOND 0
+
+    # Initial angle set
+
+    angle = initialA
+
+    # Initial velocity set
+
+    velocity = initialV
+
+    # Calculate next X position
+
+    currentX = ball.getCoordinatesx()
+    movementX = directorAlgorithmX(angle, velocity)
+
+    currentX = currentX + movementX
+
+    ball.setCoordinatesx(currentX)
+
+    # Calculate next Y position
+
+    currentY = ball.getCoordinatesy()
+    movementY = directorAlgorithmY(angle, velocity)
+
+    currentY = currentY + movementY
+
+    ball.setCoordinatesy(currentY)
+
+    # edit the balls coordinates to reflect this change
+
+    ball.setCoordinates(currentX, currentY)
+
+    ballA.movement(currentX, currentY)
+    # Calculate next velocity (Magnitude)
+
+    velocity = velocityDelta(velocity, angle, -9.8)
+
+    # Calculate next angle
+
+    time.sleep(1)
+    # SECOND 1
+
+
+def velocityFunction(initialV, timeInput):
+
+    # This is the updated position function, taking time into account.
+    acceleration = -9.8
+    velocity = initialV + timeInput * acceleration
+
+    return velocity
+
+
+def positionAlgorithm(initialV, position, time):
+
+    # Start of algorithm
+    # Determine velocity , which determines change in position
+    # Change the position according to this
+
+    positionChange = velocityFunction(initialV, time)
+    print("Position Change = ", positionChange)
+    position = position + positionChange
+    return position
+
+
 def main():
 
-    ball = ballObject()
-    wall1 = wallObject()
-    wall2 = wallObject()
-    wall3 = wallObject()
-    wall4 = wallObject()
-
-    wall3.setLength(10)
-    wall3.setWidth(50)
-    wall4.setLength(10)
-    wall4.setWidth(50)
-
     # Ball color is a variable that will be changeable later
-    ballColor = "red"
-    win = GraphWin("BouncyBall.py", 500, 500)
-    wallA = Rectangle(Point(0, 0), Point(500, 10))
-    wallB = Rectangle(Point(0, 0), Point(10, 500))
-    wallC = Rectangle(Point(490, 0), Point(500, 500))
-    wallD = Rectangle(Point(0, 490), Point(500, 500))
-    dot = Circle(Point(ball.coordinatesx, ball.coordinatesy), ball.radius)
-    wallA.setFill("blue")
-    wallB.setFill("blue")
-    wallC.setFill("blue")
-    wallD.setFill("blue")
-    dot.setFill(ballColor)
 
-    dot.draw(win)
-    wallA.draw(win)
-    wallB.draw(win)
-    wallC.draw(win)
-    wallD.draw(win)
+    ball = ballObject()
+    ballCoordinatesx = ball.getCoordinatesx()
+    ballCoordinatesy = ball.getCoordinatesy()
 
-    win.getKey()
+    # This is where the new turtle based code will go
+
+    # Here we create the screen and add a title
+    wn = turtle.Screen()
+    wn.title("BouncyBall.py")
+    wn.bgcolor("white")
+    ballA = ballAnimate()
+
+    t = 0
+    yChange = 0
+    initialV = 0
+    yPosition = 4900
+    frameTime = 1
+    # This is the beginning of the loop
+
+    while t < 100:
+
+        yChange = positionAlgorithm(initialV, yPosition, t)
+        print("yChange = ", yChange)
+
+        # After the position algorithm is worked out, the velocity needs to be iterated
+        initialV = velocityFunction(initialV, t)
+
+        yChange = round(yChange)
+
+        ballA.goto(2500, yChange)
+        t = t + frameTime
+        time.sleep(1/37)
+
+    print("Main Loop")
+    wn.mainloop()
 
 
 main()
