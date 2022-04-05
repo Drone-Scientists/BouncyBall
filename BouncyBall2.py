@@ -74,32 +74,32 @@ class testingSuite(unittest.TestCase):
         # Bottom branch coverage
         self.assertEquals(exitAngler(45, "bottom"), 135)
 
-    def textExitAnglerTop(self)
+    def textExitAnglerTop(self):
 
-    # Top branch coverage
-    self.assertEquals(exitAngler(45, "top"), 495)
+        # Top branch coverage
+        self.assertEquals(exitAngler(45, "top"), 495)
 
-    def testExitAnglerLeftLessThan(self)
+    def testExitAnglerLeftLessThan(self):
 
-    # Left less than 90 branch coverage
-    self.assertEquals(exitAngler(45, "left"), 315)
+        # Left less than 90 branch coverage
+        self.assertEquals(exitAngler(45, "left"), 315)
 
-    def testExitAnglerLeftMoreThan(self)
+    def testExitAnglerLeftMoreThan(self):
 
-    # Left more than 90 branch coverage
-    self.assertEquals(exitAngler(135, "left"), -135)
+        # Left more than 90 branch coverage
+        self.assertEquals(exitAngler(135, "left"), -135)
 
-    def testExitAnglerRightLessThan(self)
+    def testExitAnglerRightLessThan(self):
 
-    # Right less than 180 branch coverage
+        # Right less than 180 branch coverage
 
-    self.assertEquals(exitAngler(45, "right"), 135)
+        self.assertEquals(exitAngler(45, "right"), 135)
 
-    def textExitAnglerRightMoreThan(self)
+    def textExitAnglerRightMoreThan(self):
 
-    # Right more than 180 branch coverage
+        # Right more than 180 branch coverage
 
-    self.assertEquals(exitAngler(225, "right"), 135)
+        self.assertEquals(exitAngler(225, "right"), 135)
 
 
 class ballObject():
@@ -254,7 +254,13 @@ def updateBallState(ballObject):
 
             ballObject.velocity = ballObject.velocity * -1
 
-    if (ballObject.positionX + xVector)
+    if (ballObject.positionX + xVector) < 10:
+
+        # bounce Right
+        ballObject.positionX = 10
+        ballObject.angle = exitAngler(ballObject.angle, "left")
+        ballObject.velocity = ballVelocityLoss(ballObject.velocity)
+
     # Add the new X and Y components to the current coordinates.
 
     # Determine the next velocity using the velocity function. Change the velocity inside the ballObject
