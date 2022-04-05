@@ -269,6 +269,7 @@ def main():
     initialV = 0
     yPosition = 4900
     frameTime = 1
+    ballA.speed(0)
     # This is the beginning of the loop
 
     while t < 100:
