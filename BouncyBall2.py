@@ -152,12 +152,12 @@ class ballObject():
         self.positionY = 1000
 
         # angle is in degrees
-        self.angle = -pi
+        self.angle = pi/4
 
-        self.velocity = 0
+        self.velocity = 10
 
         # acceleration tuple (x, y)
-        self.acceleration = (0, -9.8)
+        self.acceleration = 0
 
     def setPositionX(self, positionX):
 
@@ -178,15 +178,6 @@ class ballObject():
 
 # This function determines the velocity magnitude
 # I think that This needs tweaking
-
-
-def velocityFunction(initialV, timeInput):
-
-    # This is the updated position function, taking time into account.
-    acceleration = -9.8
-    velocity = initialV + timeInput * acceleration
-
-    return velocity
 
 
 # Add the directorX and directorY functions here
@@ -265,7 +256,7 @@ def ballVelocityLoss(vMag):
     return vMag
 
 
-def updateBallState(ballObject, time):
+def updateBallState(ballObject, time, screenWidth, screenHeight):
 
     # The ballObject is passed into the function.
     # New X and Y unit vectors are determined by the director functions
@@ -276,39 +267,41 @@ def updateBallState(ballObject, time):
 
     # Check for collision with 4 if statements
 
-    if (ballObject.positionY + yVector) < 10:
+    if (ballObject.positionY + yVector) < 0:
 
         # bounce up
-
-        ballObject.positionY = 10
+        print("collided with bottom")
+        ballObject.positionY = 0
         ballObject.angle = exitAngler(ballObject.angle, "bottom")
         ballCollide = True
-        ballObject.velocity = ballVelocityLoss(ballObject.velocity)
+        #ballObject.velocity = ballVelocityLoss(ballObject.velocity)
 
-    if (ballObject.positionY + yVector) > 1490:
+    if (ballObject.positionY + yVector) > screenHeight:
 
         # bounce down
-
-        ballObject.positionY = 1490
+        print("collided with top")
+        ballObject.positionY = screenHeight
         ballObject.angle = exitAngler(ballObject.angle, "top")
         ballCollide = True
-        ballObject.velocity = ballVelocityLoss(ballObject.velocity)
+        #ballObject.velocity = ballVelocityLoss(ballObject.velocity)
 
-    if (ballObject.positionX + xVector) < 10:
+    if (ballObject.positionX + xVector) < 0:
 
         # bounce Right
-        ballObject.positionX = 10
+        print("collided with left")
+        ballObject.positionX = 0
         ballObject.angle = exitAngler(ballObject.angle, "left")
         ballCollide = True
-        ballObject.velocity = ballVelocityLoss(ballObject.velocity)
+        #ballObject.velocity = ballVelocityLoss(ballObject.velocity)
 
-    if (ballObject.positionX + xVector) > 1490:
+    if (ballObject.positionX + xVector) > screenWidth:
 
         # bounce Left
-        ballObject.positionX = 1490
+        print("collided with right")
+        ballObject.positionX = screenWidth
         ballObject.angle = exitAngler(ballObject.angle, "right")
         ballCollide = True
-        ballObject.velocity = ballVelocityLoss(ballObject.velocity)
+        #ballObject.velocity = ballVelocityLoss(ballObject.velocity)
 
     if ballCollide == True:
 
@@ -323,10 +316,6 @@ def updateBallState(ballObject, time):
 
     # Determine the next velocity using the velocity function. Change the velocity inside the ballObject
 
-    ballObject.velocity = velocityFunction(ballObject.velocity, time)
-
-    #
-
 
 def main():
 
@@ -334,27 +323,31 @@ def main():
 
     ball = ballObject()
 
-    xCoord = ball.positionX
-    yCoord = ball.positionY
-
     wn = turtle.Screen()
     wn.bgcolor = "white"
     wn.title("BouncyBall.py")
-    wn.setworldcoordinates(-1, -1, 1500, 1500)
-
+    wn.setworldcoordinates(0, 0, wn.canvwidth, wn.canvheight)
+    ball.positionX = 100
+    ball.positionY = 100
+    ball.angle = pi/2
     BB = turtle.Turtle()
     BB.shape("circle")
     BB.color("blue")
     BB.penup()
+    BB.setx(ball.positionX)
+    BB.sety(ball.positionY)
     BB.speed(1)
-    BB.goto(ball.positionX, ball.positionY)
 
     t = 0
 
     while t < 100:
 
-        updateBallState(ball, t)
+        print("ball position:", ball.positionX, ", ", ball.positionY)
+        print("ball velocity: ", ball.velocity)
+        updateBallState(ball, t, wn.canvwidth, wn.canvheight)
         BB.goto(ball.positionX, ball.positionY)
+        # BB.setx(ball.positionX)
+        # BB.sety(ball.positionY)
         t = t + 1
 
     print("Main Loop")
