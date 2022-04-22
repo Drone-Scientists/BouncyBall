@@ -31,11 +31,11 @@ def angleFinder(velocityX, velocityY):
     return angle
 
 
-def deltaDistance(unitVector, time):
+def deltaDistance(speed, time):
 
     # This function uses the speed unit vector to determine how far the ball travels in a direction.
 
-    deltaD = unitVector * time
+    deltaD = speed * time
     return deltaD
 
 
@@ -47,11 +47,11 @@ def deltaSpeed(velocity, time):
     return deltaS
 
 
-def deltaVelocityY(velocityY, acceleration, time):
+def deltaVelocityY(velocityY, acceleration):
 
     # This function uses velocity, acceleration, and time to figure out the change in velocity.
 
-    deltaVY = velocityY + acceleration*time
+    deltaVY = velocityY + acceleration
     return deltaVY
 
 
@@ -69,7 +69,7 @@ def velocityLoss(velocity):
 
     # This function returns a velocity that is 25 percent less than the input velocity.
 
-    velocity = velocity * .75
+    velocity = velocity * -.75
     return velocity
 
 # These next 6 functions adjust the ball graphic object to where it needs to go.
@@ -85,7 +85,7 @@ def afterCollisionAdjusterY(ballInformation, ballGraphic):
 
 def afterCollisionAdjusterYLargerEnd(ballInformation, ballGraphic, largerEndY):
 
-    ballCenter = ballGraphic.getcenter()
+    ballCenter = ballGraphic.getCenter()
     ballY = ballCenter.getY()
     endAdjust = largerEndY - ballInformation.radius
     difference = endAdjust - ballY
@@ -139,6 +139,9 @@ def collisionDetector(ballInformation, window, ballGraphic):
     largerEndX = window.getWidth() - ballInformation.radius
     largerEndY = window.getHeight() - ballInformation.radius
 
+    print("Window dimensions | LargerEndX : ",
+          largerEndX, " largerEndY: ", largerEndY)
+
     if ballInformation.positionY < ballInformation.radius:
 
         # Set the ball's position in the information and the graphic to 1 ball distance away from the edge of window
@@ -182,6 +185,7 @@ def collisionDetector(ballInformation, window, ballGraphic):
             ballInformation, ballGraphic, largerEndX, largerEndY)
         ballCollision = True
 
+    print("Collision = ", ballCollision)
     return ballCollision
 
 
@@ -191,6 +195,7 @@ def collisionDealer(ballInformation):
 
     ballInformation.velocityY = velocityLoss(ballInformation.velocityY)
     ballInformation.velocityX = velocityLoss(ballInformation.velocityX)
+    print("Collision Dealer called")
 
 
 def updateBallState(ballInformation, window, ballGraphic, time):
@@ -199,17 +204,23 @@ def updateBallState(ballInformation, window, ballGraphic, time):
 
     # Use the current ball information to figure out the change in X and/or Y values
 
-    ballInformation.positionX = deltaDistance(ballInformation.speedX, time)
-    ballInformation.positionY = deltaDistance(ballInformation.speedY, time)
+    ballXD = deltaDistance(ballInformation.velocityX, time)
+    ballYD = deltaDistance(ballInformation.velocityY, time)
 
     # check for collisions and deal with them.
 
+    collision = False
     collision = collisionDetector(ballInformation, window, ballGraphic)
-    if collision:
+
+    if collision == True:
 
         collisionDealer(ballInformation)
-        ballInformation.positionX = deltaDistance(ballInformation.speedX, time)
-        ballInformation.positionY = deltaDistance(ballInformation.speedY, time)
+        ballXD = deltaDistance(ballInformation.velocityX, time)
+        ballYD = deltaDistance(ballInformation.velocityY, time)
+
+    print("The balls Y delta is: ", ballYD)
+    ballInformation.positionX = ballInformation.positionX + ballXD
+    ballInformation.positionY = ballInformation.positionY + ballYD
 
     # move the ball in ballGraphic to match the new ballInformation
     # Moving the ball here is fairly complicated but basically you subtract the graphics coordinates from
@@ -223,17 +234,23 @@ def updateBallState(ballInformation, window, ballGraphic, time):
     ballYD = ballInformation.positionY - ballY
 
     ballGraphic.move(ballXD, ballYD)
+    print("ball moved! : ", time)
+    print("X Delta : ", ballXD, " | Y Delta : ", ballYD)
 
-    # use the deltaSpeed with both velocity's to find the change in speed
-
-    ballInformation.speedX = deltaSpeed(ballInformation.velocityX, time)
-    ballInformation.speedY = deltaSpeed(ballInformation.velocityY, time)
+    velocityX = ballInformation.velocityX
+    velocityY = ballInformation.velocityY
+    positionX = ballInformation.positionX
+    positionY = ballInformation.positionY
 
     # use the deltaVelocity functin to find the new velocity and set it
 
     ballInformation.velocityY = deltaVelocityY(
-        ballInformation.velocityY, ballInformation.acceleration, time)
-    ballInformation.velocityX = deltaVelocityX(ballInformation.velocityX)
+        velocityY, ballInformation.acceleration)
+    ballInformation.velocityX = deltaVelocityX(velocityX)
+
+    print("Velocity X: ", velocityX)
+    print("Velocity Y: ", velocityY)
+    print("Position X: ", positionX, " Position Y: ", positionY)
 
 
 def main():
@@ -249,14 +266,16 @@ def main():
     ball.setFill("blue")
     ball.draw(wn)
 
+    print("Initial Position: ", BB.positionX, " , ", BB.positionY)
     # initialize time
     t = 0
 
-    while t < 100:
+    while t < 10:
 
         updateBallState(BB, wn, ball, t)
-        time.sleep(.1)
-        t = t + .1
+        time.sleep(1)
+        t = t + 1
+        print(t)
 
     keyPress = wn.getKey()
 
